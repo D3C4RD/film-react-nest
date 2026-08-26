@@ -8,44 +8,19 @@ import { Film, FilmDocument } from '../../films/schemas/films.schema';
 export class FilmsMongoDBRepository {
   constructor(@InjectModel(Film.name) private filmModel: Model<Film>) {}
 
-  private getFilmFromDataBase(): (filmDataBase: GetFilmDto) => GetFilmDto {
-    return (root) => {
-      return {
-        id: root.id,
-        rating: root.rating,
-        director: root.director,
-        tags: root.tags,
-        image: root.image,
-        cover: root.cover,
-        title: root.title,
-        about: root.about,
-        description: root.description,
-        schedule: root.schedule,
-      };
-    };
+  async findFilmById(id: string): Promise<FilmDocument | null> {
+    return this.filmModel.findOne({ id });
   }
 
-  async findAllFilms(): Promise<{ total: number; items: GetFilmDto[] }> {
-    const films = await this.filmModel.find({}).lean();
-    const total = await this.filmModel.countDocuments({});
-    return {
-      total,
-      items: films.map(this.getFilmFromDataBase()),
-    };
+  async findAllFilms(): Promise<FilmDocument[]> {
+    return this.filmModel.find({});
   }
 
-  async findFilmById(id: string): Promise<FilmDocument> {
-    try {
-      const film = await this.filmModel.findOne({ id });
-      return film;
-    } catch {
-      throw new NotFoundException(`Фильм не найден`);
-    }
-  }
-
-  async findFilmSchedule(filmId: string, session: string) {
-    const film = (await this.findFilmById(filmId)).toObject();
-    const scheduleIndex = film.schedule.findIndex((s) => s.id === session);
-    return scheduleIndex;
+  async findFilmSchedule(filmId: string, session: string): Promise<number | null> {
+    const film = await this.findFilmById(filmId);
+    if (!film) return null;
+    
+    const index = film.schedule.findIndex(s => s.id === session);
+    return index !== -1 ? index : null;
   }
 }

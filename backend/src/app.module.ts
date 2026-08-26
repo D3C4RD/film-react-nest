@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { configProvider } from './app.config.provider';
 import { FilmsModule } from './films/films.module';
@@ -9,14 +9,19 @@ import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
+    // ConfigModule только ОДИН раз
     ConfigModule.forRoot({
+      envFilePath: '.env',
       isGlobal: true,
       cache: true,
     }),
-    // Используем process.env напрямую
-    MongooseModule.forRoot(
-      process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/prac',
-    ),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('DATABASE_URL') || 'mongodb://127.0.0.1:27017/prac',
+      }),
+      inject: [ConfigService],
+    }),
     FilmsModule,
     OrderModule,
     ServeStaticModule.forRoot({
