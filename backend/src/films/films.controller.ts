@@ -14,5 +14,4 @@ export class FilmsController {
   async getFilmSchedule(@Param('id') id: string) {
     return this.filmsService.getScheduleFilm(id);
   }
-
 }

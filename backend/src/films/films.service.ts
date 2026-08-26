@@ -3,17 +3,15 @@ import { FilmsMongoDBRepository } from '../repository/films.repository/filmsMong
 
 @Injectable()
 export class FilmsService {
-  constructor(
-    private readonly filmsRepository: FilmsMongoDBRepository,
-  ) {}
-  
+  constructor(private readonly filmsRepository: FilmsMongoDBRepository) {}
+
   async getAllFilms() {
     return this.filmsRepository.findAllFilms();
   }
 
   async getScheduleFilm(id: string) {
     const film = await this.filmsRepository.findFilmById(id);
-    
+
     if (!film) {
       throw new NotFoundException(`Film with id ${id} not found`);
     }

@@ -7,14 +7,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-      MongooseModule.forFeature([
-        { name: Film.name, schema: FilmSchema }
-      ])
+    MongooseModule.forFeature([{ name: Film.name, schema: FilmSchema }]),
   ],
   controllers: [OrdersController],
-  providers: [
-    OrdersService,
-    FilmsMongoDBRepository
-  ],
+  providers: [OrdersService, FilmsMongoDBRepository],
 })
 export class OrderModule {}

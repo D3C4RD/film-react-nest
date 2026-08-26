@@ -7,12 +7,9 @@ import { FilmsMongoDBRepository } from '../repository/films.repository/filmsMong
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Film.name, schema: FilmSchema}])
+    MongooseModule.forFeature([{ name: Film.name, schema: FilmSchema }]),
   ],
   controllers: [FilmsController],
-  providers: [
-    FilmsService,
-    FilmsMongoDBRepository
-  ],
+  providers: [FilmsService, FilmsMongoDBRepository],
 })
 export class FilmsModule {}
