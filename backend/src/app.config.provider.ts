@@ -1,14 +1,14 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 export const applicationConfig = process.env;
 
 export const configProvider = {
   provide: 'CONFIG',
-  useFactory: (configService: ConfigService): AppConfig => (
-    
-    {
+  useFactory: (configService: ConfigService): AppConfig => ({
     database: {
       driver: configService.get<string>('DATABASE_DRIVER') || 'mongodb',
-      url: configService.get<string>('DATABASE_URL') || 'mongodb://localhost:27017/prac',
+      url:
+        configService.get<string>('DATABASE_URL') ||
+        'mongodb://localhost:27017/prac',
     },
   }),
   inject: [ConfigService],
