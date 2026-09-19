@@ -1,19 +1,36 @@
 import { Module } from '@nestjs/common';
-import {ServeStaticModule} from "@nestjs/serve-static";
-import {ConfigModule} from "@nestjs/config";
-import * as path from "node:path";
-
-import {configProvider} from "./app.config.provider";
+import { MongooseModule } from '@nestjs/mongoose';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { join } from 'path';
+import { configProvider } from './app.config.provider';
+import { FilmsModule } from './films/films.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
-	ConfigModule.forRoot({
-          isGlobal: true,
-          cache: true
+    // ConfigModule только ОДИН раз
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+      cache: true,
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri:
+          configService.get<string>('DATABASE_URL') ||
+          'mongodb://127.0.0.1:27017/prac',
       }),
-      // @todo: Добавьте раздачу статических файлов из public
+      inject: [ConfigService],
+    }),
+    FilmsModule,
+    OrderModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      renderPath: '/content/afisha/',
+    }),
   ],
-  controllers: [],
   providers: [configProvider],
 })
 export class AppModule {}
