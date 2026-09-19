@@ -25,9 +25,7 @@ export class FilmsPostgreSQLRepository {
       ...film,
       schedule: (film.schedule ?? []).map((s) => ({
         ...s,
-        taken: s.taken
-          ? s.taken.split(',').filter((p) => p.length > 0)
-          : [],
+        taken: s.taken ? s.taken.split(',').filter((p) => p.length > 0) : [],
       })) as any,
     };
   }
@@ -83,9 +81,7 @@ export class FilmsPostgreSQLRepository {
     try {
       await this.filmRepository.save(toSave);
     } catch (error) {
-      throw new BadRequestException(
-        `Не удалось обновить фильм ${film.title}`,
-      );
+      throw new BadRequestException(`Не удалось обновить фильм ${film.title}`);
     }
   }
 }

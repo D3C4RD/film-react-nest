@@ -1,5 +1,3 @@
-import { IsString, IsNumber, IsFQDN, IsNotEmpty } from 'class-validator';
-
 export class GetScheduleDTO {
   id: string;
   daytime: string;
