@@ -2,44 +2,53 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Inject,
 } from '@nestjs/common';
-import { FilmsMongoDBRepository } from '../repository/films.repository/filmsMongoDB.repository';
-import { OrderDataDto, TicketDTO } from './dto/order.dto';
+import { FilmsPostgreSQLRepository } from '../repository/films.repository/filmPostgreSQL.repository';
+import { OrderDataDTO, TicketDTO } from './dto/order.dto';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly filmsRepository: FilmsMongoDBRepository) {}
+  constructor(
+    @Inject('FILMS_REPOSITORY')
+    private readonly filmsRepository: FilmsPostgreSQLRepository,
+  ) {}
 
   async createOrder(
-    orderData: OrderDataDto,
+    orderData: OrderDataDTO,
   ): Promise<{ items: TicketDTO[]; total: number }> {
     const tickets = orderData.tickets;
-    console.log('начало заказа');
     for (const ticket of tickets) {
-      const film = (
-        await this.filmsRepository.findFilmById(ticket.film)
-      ).toObject();
+      const film = await this.filmsRepository.findFilmById(ticket.film);
       const scheduleIndex = await this.filmsRepository.findFilmSchedule(
         ticket.film,
         ticket.session,
       );
       const place = `${ticket.row}:${ticket.seat}`;
-
       if (film.schedule[scheduleIndex].taken.includes(place)) {
-        throw new BadRequestException(`Место уже занято`);
+        throw new BadRequestException(
+          `К сожалению данное место ${place} уже забронировано другим посетителем`,
+        );
       }
-      this.updateSeats(ticket.film, scheduleIndex, place);
+      await this.updateSeats(ticket.film, scheduleIndex, place);
     }
     return { items: tickets, total: tickets.length };
   }
 
-  async updateSeats(filmId: string, scheduleIndex: number, place: string) {
+  async updateSeats(
+    filmId: string,
+    scheduleIndex: number,
+    place: string,
+  ): Promise<void> {
     const film = await this.filmsRepository.findFilmById(filmId);
-    const scheduleTakenPlace = `schedule.${scheduleIndex.toString()}.taken`;
+    film.schedule[scheduleIndex].taken =
+      film.schedule[scheduleIndex].taken + `,${place}`;
     try {
-      await film.updateOne({ $push: { [scheduleTakenPlace]: place } });
-    } catch {
-      new ConflictException('Возникла ошибка при обновлении данных');
+      await this.filmsRepository.updateFilm(film);
+    } catch (error) {
+      throw new ConflictException(
+        'Возникла ошибка при обновлении данных в таблице',
+      );
     }
   }
 }

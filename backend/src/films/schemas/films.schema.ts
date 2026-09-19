@@ -1,4 +1,4 @@
-import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
 @Schema()
@@ -34,28 +34,28 @@ export class Film {
   @Prop({ required: true })
   id: string;
 
-  @Prop({ required: true })
+  @Prop()
   rating: number;
 
-  @Prop({ required: true })
+  @Prop()
   director: string;
 
-  @Prop({ type: [String], required: true })
+  @Prop({ type: [String], default: [] })
   tags: string[];
 
-  @Prop({ required: true })
+  @Prop()
   image: string;
 
-  @Prop({ required: true })
+  @Prop()
   cover: string;
 
   @Prop({ required: true })
   title: string;
 
-  @Prop({ required: true })
+  @Prop()
   about: string;
 
-  @Prop({ required: true })
+  @Prop()
   description: string;
 
   @Prop({ type: [ScheduleSchema] })

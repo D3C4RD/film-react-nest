@@ -1,36 +1,32 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { join } from 'path';
-import { configProvider } from './app.config.provider';
+import * as path from 'node:path';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 import { FilmsModule } from './films/films.module';
 import { OrderModule } from './order/order.module';
+import { FilmEntity } from './films/entities/film.entity';
+import { ScheduleEntity } from './films/entities/schedule.entity';
 
 @Module({
   imports: [
-    // ConfigModule только ОДИН раз
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-      cache: true,
-    }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri:
-          configService.get<string>('DATABASE_URL') ||
-          'mongodb://127.0.0.1:27017/prac',
-      }),
-      inject: [ConfigService],
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST ?? 'localhost',
+      port: Number(process.env.DB_PORT ?? 5432),
+      username: process.env.DB_USER ?? '????',
+      password: process.env.DB_PASSWORD ?? '????',
+      database: process.env.DB_NAME ?? '????',
+      entities: [FilmEntity, ScheduleEntity],
+      synchronize: false,
     }),
     FilmsModule,
     OrderModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: path.join(__dirname, '..', 'public'),
       renderPath: '/content/afisha/',
     }),
   ],
-  providers: [configProvider],
 })
 export class AppModule {}

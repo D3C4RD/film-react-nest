@@ -1,3 +1,5 @@
+import { IsString, IsNumber, IsFQDN, IsNotEmpty } from 'class-validator';
+
 export class GetScheduleDTO {
   id: string;
   daytime: string;
@@ -8,7 +10,7 @@ export class GetScheduleDTO {
   taken: string[];
 }
 
-export class GetFilmDto {
+export class GetFilmDTO {
   id: string;
   rating: number;
   director: string;
@@ -19,9 +21,4 @@ export class GetFilmDto {
   about: string;
   description: string;
   schedule: GetScheduleDTO[];
-}
-
-export class GetFilmsDto {
-  total: number;
-  items: GetFilmDto[];
 }

@@ -31,7 +31,7 @@ export class TicketDTO {
   price: number;
 }
 
-export class OrderDataDto {
+export class OrderDataDTO {
   @IsEmail()
   email: string;
   @IsMobilePhone()

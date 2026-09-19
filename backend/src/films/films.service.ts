@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { FilmsMongoDBRepository } from '../repository/films.repository/filmsMongoDB.repository';
+import { Injectable, Inject } from '@nestjs/common';
+import { FilmsPostgreSQLRepository } from '../repository/films.repository/filmPostgreSQL.repository';
 
 @Injectable()
 export class FilmsService {
-  constructor(private readonly filmsRepository: FilmsMongoDBRepository) {}
+  constructor(
+    @Inject('FILMS_REPOSITORY')
+    private readonly filmsRepository: FilmsPostgreSQLRepository,
+  ) {}
 
   async getAllFilms() {
     return this.filmsRepository.findAllFilms();
@@ -11,16 +14,9 @@ export class FilmsService {
 
   async getScheduleFilm(id: string) {
     const film = await this.filmsRepository.findFilmById(id);
-
-    if (!film) {
-      throw new NotFoundException(`Film with id ${id} not found`);
-    }
-
-    const filmObject = film.toObject();
-
     return {
-      total: filmObject.schedule?.length || 0,
-      items: filmObject.schedule || [],
+      total: film.schedule.length,
+      items: film.schedule,
     };
   }
 }
