@@ -4,7 +4,7 @@ import { ScheduleEntity } from './schedule.entity';
 
 @Entity('films')
 export class FilmEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()

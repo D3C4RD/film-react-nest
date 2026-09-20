@@ -7,19 +7,23 @@ import { FilmsModule } from './films/films.module';
 import { OrderModule } from './order/order.module';
 import { FilmEntity } from './films/entities/film.entity';
 import { ScheduleEntity } from './films/entities/schedule.entity';
+import { AppConfigModule } from './app.config.module';
+import { AppConfig } from './app.config.provider';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST ?? 'localhost',
-      port: Number(process.env.DB_PORT ?? 5432),
-      username: process.env.DB_USER ?? 'prac',
-      password: process.env.DB_PASSWORD ?? 'prac',
-      database: process.env.DB_NAME ?? 'prac',
-      entities: [FilmEntity, ScheduleEntity],
-      synchronize: false,
+    AppConfigModule,
+    TypeOrmModule.forRootAsync({
+      inject: ['CONFIG'],
+      useFactory: (config: AppConfig) => ({
+        type: config.database.driver,
+        url: config.database.url,
+        username: config.database.username,
+        password: config.database.password,
+        entities: [FilmEntity, ScheduleEntity],
+        synchronize: false,
+      }),
     }),
     FilmsModule,
     OrderModule,

@@ -1,10 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsArray } from 'class-validator';
 import { FilmEntity } from './film.entity';
 
 @Entity('schedules')
 export class ScheduleEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -16,7 +16,7 @@ export class ScheduleEntity {
   hall: number;
 
   @Column()
-  @IsString()
+  @IsNumber()
   rows: number;
 
   @Column()
@@ -27,11 +27,11 @@ export class ScheduleEntity {
   @IsNumber()
   price: number;
 
-  @Column({ type: 'text' })
-  @IsString()
-  taken: string;
+  @Column('text', { array: true })
+  @IsArray()
+  taken: string[];
 
-  @Column()
+  @Column('uuid')
   @IsString()
   filmId: string;
 
