@@ -4,6 +4,7 @@ import {
   IsMobilePhone,
   IsNumber,
   IsString,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateOrderDto {
@@ -15,23 +16,34 @@ export class CreateOrderDto {
 export class TicketDTO {
   @IsString()
   film: string;
+
   @IsString()
   session: string;
+
   @IsString()
   daytime: string;
+
   @IsString()
   day: string;
+
   @IsString()
   time: string;
+
   @IsNumber()
   row: number;
+
   @IsNumber()
   seat: number;
+
   @IsNumber()
   price: number;
+
+  @IsString()
+  @IsOptional()
+  id: string;
 }
 
-export class OrderDataDto {
+export class OrderDataDTO {
   @IsEmail()
   email: string;
   @IsMobilePhone()

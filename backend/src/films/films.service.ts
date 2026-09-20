@@ -1,26 +1,36 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { FilmsMongoDBRepository } from '../repository/films.repository/filmsMongoDB.repository';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { FilmsPostgreSQLRepository } from '../repository/films.repository/filmPostgreSQL.repository';
+import {
+  GetFilmDTO,
+  GetScheduleDTO,
+  toFilmDTO,
+  toScheduleDTO,
+} from './dto/films.dto';
 
 @Injectable()
 export class FilmsService {
-  constructor(private readonly filmsRepository: FilmsMongoDBRepository) {}
+  constructor(
+    @Inject('FILMS_REPOSITORY')
+    private readonly filmsRepository: FilmsPostgreSQLRepository,
+  ) {}
 
-  async getAllFilms() {
-    return this.filmsRepository.findAllFilms();
+  async getAllFilms(): Promise<{ total: number; items: GetFilmDTO[] }> {
+    const { total, items } = await this.filmsRepository.findAllFilms();
+
+    return { total, items: items.map(toFilmDTO) };
   }
 
-  async getScheduleFilm(id: string) {
+  async getScheduleFilm(
+    id: string,
+  ): Promise<{ total: number; items: GetScheduleDTO[] }> {
     const film = await this.filmsRepository.findFilmById(id);
 
     if (!film) {
-      throw new NotFoundException(`Film with id ${id} not found`);
+      throw new NotFoundException(`Фильм с таким Id ${id} не найден`);
     }
 
-    const filmObject = film.toObject();
+    const items = (film.schedule ?? []).map(toScheduleDTO);
 
-    return {
-      total: filmObject.schedule?.length || 0,
-      items: filmObject.schedule || [],
-    };
+    return { total: items.length, items };
   }
 }
