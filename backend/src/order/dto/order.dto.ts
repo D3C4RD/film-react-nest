@@ -4,7 +4,7 @@ import {
   IsMobilePhone,
   IsNumber,
   IsString,
-  IsOptional
+  IsOptional,
 } from 'class-validator';
 
 export class CreateOrderDto {

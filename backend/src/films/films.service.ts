@@ -1,6 +1,11 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { FilmsPostgreSQLRepository } from '../repository/films.repository/filmPostgreSQL.repository';
-import { GetFilmDTO, GetScheduleDTO, toFilmDTO, toScheduleDTO } from './dto/films.dto';
+import {
+  GetFilmDTO,
+  GetScheduleDTO,
+  toFilmDTO,
+  toScheduleDTO,
+} from './dto/films.dto';
 
 @Injectable()
 export class FilmsService {

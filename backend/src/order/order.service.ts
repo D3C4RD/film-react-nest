@@ -59,6 +59,12 @@ export class OrdersService {
         );
       }
 
+      if (ticket.price !== schedule.price) {
+        throw new BadRequestException(
+          'Цена не соответсвует действительности'
+        );
+      }
+
       const place = `${ticket.row}:${ticket.seat}`;
 
       // Уже занято в БД?
