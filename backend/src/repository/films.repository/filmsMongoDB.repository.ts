@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { GetFilmDto } from '../../films/dto/films.dto';
+import { GetFilmDTO } from '../../films/dto/films.dto';
 import { Film, FilmDocument } from '../../films/schemas/films.schema';
 
 @Injectable()
 export class FilmsMongoDBRepository {
   constructor(@InjectModel(Film.name) private filmModel: Model<Film>) {}
 
-  private getFilmFromDataBase(): (filmDataBase: GetFilmDto) => GetFilmDto {
+  private getFilmFromDataBase(): (filmDataBase: GetFilmDTO) => GetFilmDTO {
     return (root) => {
       return {
         id: root.id,
@@ -25,7 +25,7 @@ export class FilmsMongoDBRepository {
     };
   }
 
-  async findAllFilms(): Promise<{ total: number; items: GetFilmDto[] }> {
+  async findAllFilms(): Promise<{ total: number; items: GetFilmDTO[] }> {
     const films = await this.filmModel.find({}).lean();
     const total = await this.filmModel.countDocuments({});
     return {

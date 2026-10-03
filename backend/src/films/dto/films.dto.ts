@@ -1,3 +1,6 @@
+import { FilmEntity } from '../entities/film.entity';
+import { ScheduleEntity } from '../entities/schedule.entity';
+
 export class GetScheduleDTO {
   id: string;
   daytime: string;
@@ -8,7 +11,7 @@ export class GetScheduleDTO {
   taken: string[];
 }
 
-export class GetFilmDto {
+export class GetFilmDTO {
   id: string;
   rating: number;
   director: string;
@@ -21,7 +24,25 @@ export class GetFilmDto {
   schedule: GetScheduleDTO[];
 }
 
-export class GetFilmsDto {
-  total: number;
-  items: GetFilmDto[];
-}
+export const toScheduleDTO = (schedule: ScheduleEntity): GetScheduleDTO => ({
+  id: schedule.id,
+  daytime: schedule.daytime,
+  hall: schedule.hall,
+  rows: schedule.rows,
+  seats: schedule.seats,
+  price: schedule.price,
+  taken: schedule.taken,
+});
+
+export const toFilmDTO = (film: FilmEntity): GetFilmDTO => ({
+  id: film.id,
+  rating: film.rating,
+  director: film.director,
+  tags: film.tags,
+  image: film.image,
+  cover: film.cover,
+  title: film.title,
+  about: film.about,
+  description: film.description,
+  schedule: (film.schedule ?? []).map(toScheduleDTO),
+});
