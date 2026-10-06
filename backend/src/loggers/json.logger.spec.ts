@@ -1,5 +1,7 @@
 import { JsonLogger } from './json.logger';
 
+type LogMessage = string | number | boolean | object | Error | null | undefined;
+
 describe('JsonLogger tests', () => {
   let jsonLogger: JsonLogger;
 
