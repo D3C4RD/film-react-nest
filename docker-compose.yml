@@ -34,11 +34,13 @@ services:
     container_name: film-backend
     restart: unless-stopped
     environment:
+      DATABASE_DRIVER: postgres
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USER: ${POSTGRES_USER}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_NAME: ${POSTGRES_DB}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       NODE_ENV: production
     depends_on:
       - postgres

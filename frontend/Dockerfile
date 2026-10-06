@@ -1,3 +1,4 @@
+  GNU nano 8.7.1                                          Dockerfile
 # frontend/Dockerfile
 FROM node:20-alpine AS builder
 
